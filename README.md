@@ -118,4 +118,3 @@ circleci orb publish orb.yml jfrog/artifactory-orb@dev:alpha
 ## License
 
 Apache 2.0
-
