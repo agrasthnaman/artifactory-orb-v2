@@ -169,16 +169,31 @@ jobs:
           command: |
             echo "Uploading artifacts to Artifactory..."
             
+            # Use ARTIFACTORY_REPO from context, or default to generic-local
+            REPO="${ARTIFACTORY_REPO:-generic-local}"
+            echo "Using repository: $REPO"
+            
+            # Check if repository exists
+            echo "Verifying repository exists..."
+            if ! jf rt curl -XGET "/api/repositories/${REPO}" --server-id=my-artifactory > /dev/null 2>&1; then
+              echo "Error: Repository '${REPO}' not found in Artifactory"
+              echo "Available options:"
+              echo "  1. Create repository '${REPO}' in Artifactory UI"
+              echo "  2. Add ARTIFACTORY_REPO environment variable to your context with an existing repository name"
+              echo "     Example: libs-release-local, libs-snapshot-local, maven-local, etc."
+              exit 1
+            fi
+            
             # Upload single file
             jf rt upload "artifact-${CIRCLE_BUILD_NUM}.txt" \
-              "generic-local/circleci-test/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/" \
+              "${REPO}/circleci-test/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/" \
               --server-id=my-artifactory \
               --build-name="${CIRCLE_PROJECT_REPONAME}" \
               --build-number="${CIRCLE_BUILD_NUM}"
             
             # Upload directory
             jf rt upload "build/*" \
-              "generic-local/circleci-test/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/build/" \
+              "${REPO}/circleci-test/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/build/" \
               --server-id=my-artifactory \
               --build-name="${CIRCLE_PROJECT_REPONAME}" \
               --build-number="${CIRCLE_BUILD_NUM}"
@@ -216,9 +231,11 @@ jobs:
           command: |
             echo "Testing artifact download..."
             
+            REPO="${ARTIFACTORY_REPO:-generic-local}"
+            
             mkdir -p downloaded/
             jf rt download \
-              "generic-local/circleci-test/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/*" \
+              "${REPO}/circleci-test/${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BUILD_NUM}/*" \
               "downloaded/" \
               --server-id=my-artifactory
             
