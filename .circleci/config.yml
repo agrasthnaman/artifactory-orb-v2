@@ -83,7 +83,7 @@ jobs:
       - checkout
       
       - artifactory/install:
-          version: "2.54.0"
+          version: "2"
       
       - run:
           name: Verify Installation
