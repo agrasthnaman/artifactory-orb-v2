@@ -49,6 +49,7 @@ Your context must have these environment variables:
 | `ARTIFACTORY_URL` | Your JFrog Artifactory URL | `https://mycompany.jfrog.io/artifactory` |
 | `ARTIFACTORY_USER` | JFrog username | `admin` or your username |
 | `ARTIFACTORY_API_KEY` | JFrog API Key or Access Token | `AKC...` or `eyJ...` |
+| `ARTIFACTORY_REPO` | (Optional) Repository name for uploads | `generic-local` or `libs-release-local` |
 
 ### To Add/Check Variables in Context:
 1. Go to: https://app.circleci.com/settings/organization
@@ -65,30 +66,38 @@ Make sure your repository can use the context:
 2. Option 1: **All members** can use (easiest for testing)
 3. Option 2: **Restricted** - Add your repository explicitly
 
-## Step 5: Update Repository Name (If Needed)
+## Step 5: Set Repository Name
 
-The test uploads to: `generic-local/circleci-test/...`
+The test uploads to a repository. By default, it uses `generic-local`.
 
-**Make sure `generic-local` repository exists in your Artifactory!**
+### Option A: Add ARTIFACTORY_REPO to Context (Recommended)
 
-### To Change Repository:
-Edit line ~141 in `.circleci/config.yml`:
-
-```yaml
-# Change this:
-jf rt upload "artifact-${CIRCLE_BUILD_NUM}.txt" \
-  "generic-local/circleci-test/..." \
-
-# To your repository:
-jf rt upload "artifact-${CIRCLE_BUILD_NUM}.txt" \
-  "YOUR-REPO-NAME/circleci-test/..." \
-```
+1. Go to your context: https://app.circleci.com/settings/organization
+2. Click on `jfrog-context`
+3. Add environment variable:
+   - **Name**: `ARTIFACTORY_REPO`
+   - **Value**: Your repository name (e.g., `libs-release-local`)
 
 **Common repository names:**
-- `generic-local` (generic artifacts)
+- `generic-local` (generic artifacts) - default
 - `libs-release-local` (release artifacts)
 - `libs-snapshot-local` (snapshot artifacts)
 - `maven-local`, `npm-local`, etc.
+
+### Option B: Create `generic-local` Repository
+
+If you want to use the default `generic-local`:
+
+1. Login to JFrog Platform
+2. Go to: **Administration → Repositories → Repositories**
+3. Click: **"Add Repository"** → **"Local Repository"**
+4. Select Type: **"Generic"**
+5. Repository Key: `generic-local`
+6. Click: **"Create"**
+
+### Verify Repository Exists
+
+The pipeline will now check if the repository exists before uploading!
 
 ## What the Test Will Do
 
