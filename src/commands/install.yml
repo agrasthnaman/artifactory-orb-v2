@@ -10,18 +10,20 @@ steps:
   - run:
       name: Install JFrog CLI
       command: |
-        VERSION="<<parameters.version>>"
-        
         # Check if already installed
         if command -v jf &> /dev/null; then
             echo "JFrog CLI already installed: $(jf --version)"
             exit 0
         fi
         
-        echo "Installing JFrog CLI v${VERSION}..."
-        curl -fL https://install-cli.jfrog.io | sh -s "${VERSION}"
-        chmod +x jf
-        sudo mv jf /usr/local/bin/jf
+        echo "Installing JFrog CLI (latest)..."
+        curl -fL https://install-cli.jfrog.io | sh
+        
+        # Installer places jf in current directory, move to PATH
+        if [ -f "./jf" ]; then
+            sudo mv ./jf /usr/local/bin/jf || mv ./jf ~/bin/jf || true
+            chmod +x /usr/local/bin/jf 2>/dev/null || chmod +x ~/bin/jf
+        fi
         
         jf --version
         echo "JFrog CLI installed successfully"

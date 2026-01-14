@@ -28,14 +28,16 @@ orbs:
                     exit 0
                 fi
                 
-                VERSION="<<parameters.version>>"
-                echo "Installing JFrog CLI v${VERSION} (latest)..."
+                echo "Installing JFrog CLI (latest)..."
                 
-                # Use official JFrog CLI installer (always gets latest)
-                curl -fL https://install-cli.jfrog.io | sh -s "${VERSION}"
+                # Use official installer without version parameter for latest
+                curl -fL https://install-cli.jfrog.io | sh
                 
-                # Move to PATH
-                sudo mv jf /usr/local/bin/jf 2>/dev/null || true
+                # Installer places jf in current directory, move to PATH
+                if [ -f "./jf" ]; then
+                    sudo mv ./jf /usr/local/bin/jf || mv ./jf ~/bin/jf || true
+                    chmod +x /usr/local/bin/jf 2>/dev/null || chmod +x ~/bin/jf
+                fi
                 
                 # Verify installation
                 jf --version
