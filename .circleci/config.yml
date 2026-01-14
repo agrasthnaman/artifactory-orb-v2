@@ -205,13 +205,11 @@ jobs:
           command: |
             echo "Collecting build information..."
             
-            # Collect environment variables
-            jf rt build-collect-env "${CIRCLE_PROJECT_REPONAME}" "${CIRCLE_BUILD_NUM}" \
-              --server-id=my-artifactory
+            # Collect environment variables (no server-id needed - local operation)
+            jf rt build-collect-env "${CIRCLE_PROJECT_REPONAME}" "${CIRCLE_BUILD_NUM}"
             
-            # Collect Git information
-            jf rt build-add-git "${CIRCLE_PROJECT_REPONAME}" "${CIRCLE_BUILD_NUM}" \
-              --server-id=my-artifactory
+            # Collect Git information (no server-id needed - local operation)
+            jf rt build-add-git "${CIRCLE_PROJECT_REPONAME}" "${CIRCLE_BUILD_NUM}"
             
             echo "Build info collected!"
       
