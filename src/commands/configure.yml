@@ -57,11 +57,11 @@ steps:
                 --interactive=false \
                 --overwrite
         elif [ -n "$USER" ] && [ -n "$PASSWORD" ]; then
-            echo "Using username/password authentication"
+            echo "Using username/API key authentication"
             jf config add "$SERVER_ID" \
                 --artifactory-url="$URL" \
                 --user="$USER" \
-                --password="$PASSWORD" \
+                --access-token="$PASSWORD" \
                 --interactive=false \
                 --overwrite
         else

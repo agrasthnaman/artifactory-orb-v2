@@ -36,11 +36,11 @@ if [ -n "$JFROG_ACCESS_TOKEN" ]; then
         --overwrite
 
 elif [ -n "$JFROG_USER" ] && [ -n "$JFROG_PASSWORD" ]; then
-    echo "Using username/password authentication"
+    echo "Using username/API key authentication"
     jf config add "$SERVER_ID" \
         --artifactory-url="$URL" \
         --user="$JFROG_USER" \
-        --password="$JFROG_PASSWORD" \
+        --access-token="$JFROG_PASSWORD" \
         --interactive=false \
         --overwrite
 
